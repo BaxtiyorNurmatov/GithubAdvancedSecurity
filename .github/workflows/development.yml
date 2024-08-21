@@ -1,16 +1,16 @@
 name: Pull Request Action
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Check
-    runs-on: ubuntu-latest
+  test:
+    name: Test
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set Up JDK
@@ -19,12 +19,29 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
+      - name: Run tests
+        uses: gradle/gradle-build-action@v3
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+        with:
+          arguments: test
+
+  detekt:
+    name: Detekt
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
 
       - name: Run detekt
         run: ./gradlew detekt
 
       - name: Upload SARIF to GitHub for code scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
-            sarif_file: build/reports/detekt/detekt.sarif
+          sarif_file: app/build/reports/detekt/detekt.sarif

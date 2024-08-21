@@ -17,4 +17,5 @@ class MainActivity : AppCompatActivity() {
             insets
         }
     }
+    val a = 2
 }

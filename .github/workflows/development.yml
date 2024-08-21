@@ -19,7 +19,6 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-
       - name: Run detekt
         run: ./gradlew detekt
 
@@ -28,3 +27,10 @@ jobs:
         if: success() || failure()
         with:
             sarif_file: app/build/reports/detekt/detekt.sarif
+
+      - name: Run tests
+        uses: gradle/gradle-build-action@v3
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+        with:
+          arguments: test

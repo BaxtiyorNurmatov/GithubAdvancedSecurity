@@ -32,7 +32,7 @@ jobs:
           arguments: test
 
   detekt:
-    name: Test
+    name: Detekt
     runs-on: ubuntu-latest
     needs: [ setup ]
     steps:
